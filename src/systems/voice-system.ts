@@ -729,7 +729,11 @@ export class VoiceSystem extends createSystem({}) {
 
     this.isCapturingVision = true;
     try {
-      const res = await fetch('http://localhost:3001/api/vision-describe', {
+      const BACKEND_URL =
+        (typeof import.meta !== 'undefined' &&
+          (import.meta as any).env?.VITE_WEAVR_API_URL) ||
+        'http://localhost:3001';
+      const res = await fetch(`${BACKEND_URL}/api/vision-describe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
