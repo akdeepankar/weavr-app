@@ -1,0 +1,116 @@
+{
+  "version": "iwsdk.scene.v1",
+  "units": "meters",
+  "components": {
+    "com.iwsdk.components.IBLGradient": {
+      "sky": [0.06, 0.06, 0.1, 1],
+      "equator": [0.04, 0.04, 0.07, 1],
+      "ground": [0.02, 0.02, 0.04, 1],
+      "intensity": 0.35
+    }
+  },
+  "environment": {
+    "toneMapping": "aces",
+    "exposure": 1.0,
+    "shadows": true,
+    "shadowMapType": "pcf"
+  },
+  "resources": {},
+  "nodes": [
+    {
+      "id": "shadow-catcher",
+      "name": "Shadow Catcher",
+      "framingRole": "support",
+      "transform": {
+        "position": [0, 0.001, 0]
+      },
+      "components": {
+        "ShadowCatcher": {
+          "size": [10, 10],
+          "opacity": 0.15
+        }
+      }
+    },
+    {
+      "id": "welcome-panel",
+      "name": "Welcome Panel",
+      "content": {
+        "type": "asset",
+        "asset": "welcome-panel"
+      },
+      "transform": {
+        "position": [0, 1.45, -1.35],
+        "rotationDeg": [-2, 0, 0],
+        "scale": 0.22
+      },
+      "components": {
+        "RayInteractable": {}
+      }
+    },
+    {
+      "id": "toolbar-panel",
+      "name": "Toolbar Panel",
+      "content": {
+        "type": "asset",
+        "asset": "toolbar-panel"
+      },
+      "transform": {
+        "position": [-0.72, 1.42, -1.05],
+        "rotationDeg": [0, 30, 0],
+        "scale": 0.2
+      },
+      "components": {
+        "RayInteractable": {}
+      }
+    },
+    {
+      "id": "checklist-panel",
+      "name": "Checklist Panel",
+      "content": {
+        "type": "asset",
+        "asset": "checklist-panel"
+      },
+      "transform": {
+        "position": [0.96, 1.42, -1.02],
+        "rotationDeg": [0, -32, 0],
+        "scale": 0.2
+      },
+      "components": {
+        "RayInteractable": {}
+      }
+    },
+    {
+      "id": "key-light",
+      "name": "Key Light",
+      "transform": {
+        "position": [-2.5, 10, 2],
+        "rotationDeg": [-72, -14, 0]
+      },
+      "components": {
+        "DirectionalLight": {
+          "color": [0.92, 0.9, 0.86, 1],
+          "intensity": 1.8,
+          "castShadow": true,
+          "shadowMapSize": "1024",
+          "shadowCameraSize": 8,
+          "shadowCameraNear": 2,
+          "shadowCameraFar": 22,
+          "shadowRadius": 6,
+          "shadowBias": -0.0004,
+          "shadowNormalBias": 0.02
+        }
+      }
+    },
+    {
+      "id": "fill-light",
+      "name": "Fill Light",
+      "components": {
+        "HemisphereLight": {
+          "skyColor": [0.55, 0.6, 0.75, 1],
+          "groundColor": [0.15, 0.13, 0.12, 1],
+          "intensity": 0.7
+        }
+      }
+    }
+  ]
+}

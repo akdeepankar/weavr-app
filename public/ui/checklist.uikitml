@@ -1,0 +1,530 @@
+<!--
+  WeaVR floating checklist sidebar — persistent default task list.
+  Features:
+  - Add Task button on top header alongside Hide button
+  - Up and Down arrow buttons placed below footer buttons
+  - Selected state: TICK MARK (<Check>) with pure white text
+  - Unselected state: EMPTY BOX (<Square>) with pure white text
+  - Virtual Keyboard with Delete Task button, DEL, SPACE, CLR, SAVE
+-->
+<style>
+  .checklist-root {
+    flex-direction: column;
+    width: 324px;
+    background-color: rgba(13, 17, 23, 0.94);
+    border-color: rgba(255, 255, 255, 0.12);
+    border-width: 1.5px;
+    border-radius: 16px;
+    padding-bottom: 8px;
+    padding-top: 6px;
+  }
+
+  .checklist-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 14px;
+    padding-right: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .header-left {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .checklist-title {
+    color: #F8FAFC;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 2px;
+  }
+
+  .checklist-title:dark {
+    color: #F8FAFC;
+  }
+
+  .checklist-badge {
+    color: #10B981;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .checklist-badge:dark {
+    color: #10B981;
+  }
+
+  .header-controls {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-add-btn {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 20px;
+  }
+
+  .header-add-label {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .min-toggle-btn {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 20px;
+  }
+
+  .min-toggle-label {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .checklist-section {
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  .checklist-empty-box {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
+  .empty-title {
+    color: #F1F5F9;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .empty-title:dark {
+    color: #F1F5F9;
+  }
+
+  .empty-subtitle {
+    color: #64748B;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .empty-subtitle:dark {
+    color: #64748B;
+  }
+
+  .empty-add-btn {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 18px;
+    margin-top: 4px;
+  }
+
+  .empty-add-label {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .task-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .task-btn {
+    flex-grow: 1;
+    justify-content: flex-start;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  .task-label {
+    transform-translate-y: 1px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  .pencil-btn {
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+  }
+
+  .checklist-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.08);
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+
+  .checklist-divider:dark {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .action-row {
+    flex-direction: row;
+    gap: 6px;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  .action-btn {
+    flex-grow: 1;
+    justify-content: center;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    border-radius: 20px;
+  }
+
+  .action-label {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .scroll-footer-row {
+    flex-direction: row;
+    gap: 6px;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 2px;
+  }
+
+  .scroll-btn {
+    flex-grow: 1;
+    justify-content: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 20px;
+  }
+
+  .scroll-label {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .keyboard-box {
+    flex-direction: column;
+    gap: 3px;
+    background-color: rgba(0, 0, 0, 0.50);
+    border-color: rgba(16, 185, 129, 0.35);
+    border-width: 1px;
+    border-radius: 12px;
+    padding: 6px;
+    margin-left: 6px;
+    margin-right: 6px;
+    margin-top: 4px;
+  }
+
+  .kb-preview-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .kb-preview-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #34D399;
+  }
+
+  .kb-row {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .key-btn {
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .key-label {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .key-wide {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .key-action {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+
+  .key-danger {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .danger-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #F87171;
+  }
+</style>
+<Panel class="checklist-root">
+  <!-- Top Header: TASKS heading + live counter + Add Task button + Hide button -->
+  <div class="checklist-header">
+    <div class="header-left">
+      <div class="checklist-title">TASKS</div>
+      <div id="tasks-counter-badge" class="checklist-badge">0/0</div>
+    </div>
+    <div class="header-controls">
+      <Button id="btn-add-task-header" class="header-add-btn" style="display: none">
+        <ButtonIcon>
+          <Plus></Plus>
+        </ButtonIcon>
+        <ButtonLabel class="header-add-label">Add Task</ButtonLabel>
+      </Button>
+      <Button id="btn-toggle-min" class="min-toggle-btn">
+        <ButtonLabel id="min-toggle-label" class="min-toggle-label">Expand</ButtonLabel>
+      </Button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div id="checklist-body" class="checklist-section" style="display: none">
+    <div class="checklist-divider"></div>
+
+    <!-- Empty state (shown when tasks list is empty) -->
+    <div id="checklist-empty" class="checklist-empty-box">
+      <div class="empty-title">No tasks yet</div>
+      <div class="empty-subtitle">Tap below to add your first objective</div>
+      <Button id="btn-empty-add" class="empty-add-btn">
+        <ButtonIcon>
+          <Plus></Plus>
+        </ButtonIcon>
+        <ButtonLabel class="empty-add-label">Add Task</ButtonLabel>
+      </Button>
+    </div>
+
+    <!-- Task Row 0 -->
+    <div id="row-task-0" class="task-row">
+      <Button id="btn-task-0" class="task-btn">
+        <ButtonIcon id="icon-done-0" style="display: none">
+          <Check></Check>
+        </ButtonIcon>
+        <ButtonIcon id="icon-empty-0">
+          <Square></Square>
+        </ButtonIcon>
+        <ButtonLabel id="label-task-0" class="task-label">Task 1</ButtonLabel>
+      </Button>
+      <Button id="btn-edit-0" class="pencil-btn">
+        <ButtonIcon>
+          <Pencil></Pencil>
+        </ButtonIcon>
+      </Button>
+    </div>
+
+    <!-- Task Row 1 -->
+    <div id="row-task-1" class="task-row">
+      <Button id="btn-task-1" class="task-btn">
+        <ButtonIcon id="icon-done-1" style="display: none">
+          <Check></Check>
+        </ButtonIcon>
+        <ButtonIcon id="icon-empty-1">
+          <Square></Square>
+        </ButtonIcon>
+        <ButtonLabel id="label-task-1" class="task-label">Task 2</ButtonLabel>
+      </Button>
+      <Button id="btn-edit-1" class="pencil-btn">
+        <ButtonIcon>
+          <Pencil></Pencil>
+        </ButtonIcon>
+      </Button>
+    </div>
+
+    <!-- Task Row 2 -->
+    <div id="row-task-2" class="task-row">
+      <Button id="btn-task-2" class="task-btn">
+        <ButtonIcon id="icon-done-2" style="display: none">
+          <Check></Check>
+        </ButtonIcon>
+        <ButtonIcon id="icon-empty-2">
+          <Square></Square>
+        </ButtonIcon>
+        <ButtonLabel id="label-task-2" class="task-label">Task 3</ButtonLabel>
+      </Button>
+      <Button id="btn-edit-2" class="pencil-btn">
+        <ButtonIcon>
+          <Pencil></Pencil>
+        </ButtonIcon>
+      </Button>
+    </div>
+
+    <!-- Task Row 3 -->
+    <div id="row-task-3" class="task-row">
+      <Button id="btn-task-3" class="task-btn">
+        <ButtonIcon id="icon-done-3" style="display: none">
+          <Check></Check>
+        </ButtonIcon>
+        <ButtonIcon id="icon-empty-3">
+          <Square></Square>
+        </ButtonIcon>
+        <ButtonLabel id="label-task-3" class="task-label">Task 4</ButtonLabel>
+      </Button>
+      <Button id="btn-edit-3" class="pencil-btn">
+        <ButtonIcon>
+          <Pencil></Pencil>
+        </ButtonIcon>
+      </Button>
+    </div>
+
+    <!-- Task Row 4 -->
+    <div id="row-task-4" class="task-row">
+      <Button id="btn-task-4" class="task-btn">
+        <ButtonIcon id="icon-done-4" style="display: none">
+          <Check></Check>
+        </ButtonIcon>
+        <ButtonIcon id="icon-empty-4">
+          <Square></Square>
+        </ButtonIcon>
+        <ButtonLabel id="label-task-4" class="task-label">Task 5</ButtonLabel>
+      </Button>
+      <Button id="btn-edit-4" class="pencil-btn">
+        <ButtonIcon>
+          <Pencil></Pencil>
+        </ButtonIcon>
+      </Button>
+    </div>
+
+    <div class="checklist-divider"></div>
+
+    <!-- Footer Actions (Keyboard & Reset) -->
+    <div class="action-row">
+      <Button id="btn-toggle-keyboard" class="action-btn">
+        <ButtonIcon>
+          <Pencil></Pencil>
+        </ButtonIcon>
+        <ButtonLabel id="kb-toggle-btn-label" class="action-label">Keyboard</ButtonLabel>
+      </Button>
+      <Button id="btn-reset-tasks" class="action-btn">
+        <ButtonIcon>
+          <RotateCcw></RotateCcw>
+        </ButtonIcon>
+        <ButtonLabel class="action-label">Reset</ButtonLabel>
+      </Button>
+    </div>
+
+    <!-- Below Footer Actions: Up and Down Arrow Buttons -->
+    <div class="scroll-footer-row">
+      <Button id="btn-scroll-up" class="scroll-btn">
+        <ButtonIcon>
+          <ChevronUp></ChevronUp>
+        </ButtonIcon>
+        <ButtonLabel class="scroll-label">Scroll Up</ButtonLabel>
+      </Button>
+      <Button id="btn-scroll-down" class="scroll-btn">
+        <ButtonIcon>
+          <ChevronDown></ChevronDown>
+        </ButtonIcon>
+        <ButtonLabel class="scroll-label">Scroll Down</ButtonLabel>
+      </Button>
+    </div>
+
+    <!-- Inbuilt Virtual Keyboard Box (toggled in edit mode) -->
+    <div id="keyboard-box" class="keyboard-box" style="display: none">
+      <!-- Input Preview & Close & Delete -->
+      <div class="kb-preview-row">
+        <ButtonLabel id="kb-preview-text" class="kb-preview-text">Type task here...</ButtonLabel>
+        <Button id="btn-kb-close" class="header-add-btn">
+          <ButtonIcon>
+            <X></X>
+          </ButtonIcon>
+        </Button>
+      </div>
+
+      <!-- Row 1: Q - P -->
+      <div class="kb-row">
+        <Button id="k-q" class="key-btn"><ButtonLabel class="key-label">Q</ButtonLabel></Button>
+        <Button id="k-w" class="key-btn"><ButtonLabel class="key-label">W</ButtonLabel></Button>
+        <Button id="k-e" class="key-btn"><ButtonLabel class="key-label">E</ButtonLabel></Button>
+        <Button id="k-r" class="key-btn"><ButtonLabel class="key-label">R</ButtonLabel></Button>
+        <Button id="k-t" class="key-btn"><ButtonLabel class="key-label">T</ButtonLabel></Button>
+        <Button id="k-y" class="key-btn"><ButtonLabel class="key-label">Y</ButtonLabel></Button>
+        <Button id="k-u" class="key-btn"><ButtonLabel class="key-label">U</ButtonLabel></Button>
+        <Button id="k-i" class="key-btn"><ButtonLabel class="key-label">I</ButtonLabel></Button>
+        <Button id="k-o" class="key-btn"><ButtonLabel class="key-label">O</ButtonLabel></Button>
+        <Button id="k-p" class="key-btn"><ButtonLabel class="key-label">P</ButtonLabel></Button>
+      </div>
+
+      <!-- Row 2: A - L -->
+      <div class="kb-row">
+        <Button id="k-a" class="key-btn"><ButtonLabel class="key-label">A</ButtonLabel></Button>
+        <Button id="k-s" class="key-btn"><ButtonLabel class="key-label">S</ButtonLabel></Button>
+        <Button id="k-d" class="key-btn"><ButtonLabel class="key-label">D</ButtonLabel></Button>
+        <Button id="k-f" class="key-btn"><ButtonLabel class="key-label">F</ButtonLabel></Button>
+        <Button id="k-g" class="key-btn"><ButtonLabel class="key-label">G</ButtonLabel></Button>
+        <Button id="k-h" class="key-btn"><ButtonLabel class="key-label">H</ButtonLabel></Button>
+        <Button id="k-j" class="key-btn"><ButtonLabel class="key-label">J</ButtonLabel></Button>
+        <Button id="k-k" class="key-btn"><ButtonLabel class="key-label">K</ButtonLabel></Button>
+        <Button id="k-l" class="key-btn"><ButtonLabel class="key-label">L</ButtonLabel></Button>
+      </div>
+
+      <!-- Row 3: Z - M + Backspace -->
+      <div class="kb-row">
+        <Button id="k-z" class="key-btn"><ButtonLabel class="key-label">Z</ButtonLabel></Button>
+        <Button id="k-x" class="key-btn"><ButtonLabel class="key-label">X</ButtonLabel></Button>
+        <Button id="k-c" class="key-btn"><ButtonLabel class="key-label">C</ButtonLabel></Button>
+        <Button id="k-v" class="key-btn"><ButtonLabel class="key-label">V</ButtonLabel></Button>
+        <Button id="k-b" class="key-btn"><ButtonLabel class="key-label">B</ButtonLabel></Button>
+        <Button id="k-n" class="key-btn"><ButtonLabel class="key-label">N</ButtonLabel></Button>
+        <Button id="k-m" class="key-btn"><ButtonLabel class="key-label">M</ButtonLabel></Button>
+        <Button id="k-backspace" class="key-btn key-wide"><ButtonLabel class="key-label">DEL</ButtonLabel></Button>
+      </div>
+
+      <!-- Row 4: Space + Delete Task + Clear + Save -->
+      <div class="kb-row">
+        <Button id="k-space" class="key-btn key-wide"><ButtonLabel class="key-label">SPACE</ButtonLabel></Button>
+        <Button id="btn-delete-task" class="key-btn key-danger">
+          <ButtonIcon>
+            <Trash2></Trash2>
+          </ButtonIcon>
+          <ButtonLabel class="danger-label">DEL TASK</ButtonLabel>
+        </Button>
+        <Button id="k-clear" class="key-btn"><ButtonLabel class="key-label">CLR</ButtonLabel></Button>
+        <Button id="k-save" class="key-btn key-action">
+          <ButtonIcon>
+            <Check></Check>
+          </ButtonIcon>
+          <ButtonLabel class="key-label">SAVE</ButtonLabel>
+        </Button>
+      </div>
+    </div>
+  </div>
+</Panel>

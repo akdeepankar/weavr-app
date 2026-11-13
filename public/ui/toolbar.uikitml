@@ -1,0 +1,95 @@
+<!--
+  WeaVR floating toolbar — always-visible node creation & control.
+  Lucide icons: Type, Sparkles, Layers, Mic, Play, Undo2, Redo2, RotateCcw.
+-->
+<style>
+  .toolbar-root {
+    flex-direction: column;
+    width: 204px;
+    background-color: rgba(13, 17, 23, 0.88);
+    border-color: rgba(255, 255, 255, 0.08);
+    border-width: 1px;
+    border-radius: 14px;
+  }
+
+  .toolbar-header {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 12px;
+    padding-bottom: 6px;
+    color: #94A3B8;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+  }
+
+  .toolbar-header:dark {
+    color: #94A3B8;
+  }
+
+  .toolbar-section {
+    flex-direction: column;
+    gap: 2px;
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
+  .toolbar-btn {
+    justify-content: flex-start;
+  }
+
+  .toolbar-label {
+    transform-translate-y: 1px;
+    font-size: 13px;
+  }
+
+  .toolbar-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.06);
+    margin-left: 14px;
+    margin-right: 14px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  .toolbar-divider:dark {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .toolbar-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 10px;
+    padding-top: 4px;
+  }
+</style>
+<Panel class="toolbar-root">
+  <div class="toolbar-header">WEAVR</div>
+
+  <div class="toolbar-section">
+    <Button id="btn-voice" class="toolbar-btn">
+      <ButtonIcon>
+        <Mic></Mic>
+      </ButtonIcon>
+      <ButtonLabel id="voice-label" class="toolbar-label">Voice</ButtonLabel>
+    </Button>
+  </div>
+
+  <div class="toolbar-divider"></div>
+
+  <div class="toolbar-section">
+    <Button id="btn-delete-selected" class="toolbar-btn">
+      <ButtonIcon>
+        <Trash2></Trash2>
+      </ButtonIcon>
+      <ButtonLabel class="toolbar-label">Delete Node</ButtonLabel>
+    </Button>
+    <Button id="btn-reset" class="toolbar-btn">
+      <ButtonIcon>
+        <RotateCcw></RotateCcw>
+      </ButtonIcon>
+      <ButtonLabel class="toolbar-label">Reset View</ButtonLabel>
+    </Button>
+  </div>
+</Panel>
+
